@@ -81,7 +81,9 @@ const ProductPage = () => {
       {/* Main Content */}
       <div className="main-content">
         {/* Filter Panel */}
-        
+        <div >
+          <FilterPanel />
+        </div>
 
         {/* Product Sections */}
         <div className="products-section">
