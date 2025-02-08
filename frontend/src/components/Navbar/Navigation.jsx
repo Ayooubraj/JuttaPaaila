@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Navbar.css';
-import { FaUserCircle, FaEye, FaEyeSlash, FaShoppingCart } from 'react-icons/fa';
+import { FaUserCircle, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -14,7 +14,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfile, setShowProfile] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -65,10 +64,6 @@ const Navbar = () => {
     setShowProfile(!showProfile);
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   // Close profile dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -96,8 +91,20 @@ const Navbar = () => {
         <li><Link to="/contact">Contact</Link></li>
         {user ? (
           <>
-            <li><Link to="/profile">Profile</Link></li>
-            <li><button onClick={handleLogout}>Logout</button></li>
+            <li className="navbar__profile" onClick={toggleProfile}>
+              <FaUserCircle className="avatar-icon" />
+            </li>
+            {showProfile && (
+              <div className="profile-dropdown">
+                <div className="profile-info">
+                  <h3>{user.name}</h3>
+                  <p>{user.email}</p>
+                </div>
+                <button onClick={handleLogout} className="logout-button">
+                  Logout
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <li><Link to="/login">Login</Link></li>
@@ -122,47 +129,6 @@ const Navbar = () => {
           <span className="cart-label">Cart</span>
         </div>
       </Link>
-
-      {user ? (
-        <div className="navbar__profile">
-          <div className="profile-icon" onClick={toggleProfile}>
-            <div className="profile-icon-container">
-              <FaUserCircle className="avatar-icon" />
-              <span className="profile-label">Profile</span>
-            </div>
-            <span className="username">{user.fullName}</span>
-          </div>
-          {showProfile && (
-            <div className="profile-dropdown">
-              <div className="profile-info">
-                <h3>{user.fullName}</h3>
-                <p>{user.email}</p>
-                <div className="password-field">
-                  <span>Password: </span>
-                  <span>{showPassword ? user.password : '••••••••'}</span>
-                  <button 
-                    className="toggle-password"
-                    onClick={togglePasswordVisibility}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-              <button onClick={handleLogout} className="logout-button">
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <Link to="/login" className="navbar__login">
-          <div className="profile-icon-container">
-            <FaUserCircle className="avatar-icon" />
-            <span className="profile-label">Profile</span>
-          </div>
-        </Link>
-      )}
 
       <Snackbar 
         open={snackbar.open} 
