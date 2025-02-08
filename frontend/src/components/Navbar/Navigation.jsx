@@ -129,11 +129,11 @@ const Navbar = () => {
         </div>
       </Link>
 
-      {/* {!user && (
+      {!user && (
         <Link to="/login" className="navbar__login">
           Profile
         </Link>
-      )} */}
+      )}
 
       <Snackbar 
         open={snackbar.open} 
