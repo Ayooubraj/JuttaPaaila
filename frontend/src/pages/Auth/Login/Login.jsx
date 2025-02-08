@@ -28,6 +28,7 @@ const Login = () => {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLockedOut, setIsLockedOut] = useState(false);
   const [timeoutDuration, setTimeoutDuration] = useState(10); // 10 seconds timeout
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     let timer;
@@ -50,15 +51,15 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post('http://localhost:5000/api/auth/login', {
-            email,
-            password,
-        });
-        // Handle successful login (e.g., store token, redirect)
-        console.log(response.data.message);
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password,
+      });
+      setMessage(response.data.message); // Show success message
+      // Navigate to homepage after successful login
+      navigate('/');
     } catch (error) {
-        console.error('Login error:', error.response.data.message);
-        // Handle error (e.g., show error message)
+      setMessage(error.response.data.message); // Show error message
     }
   };
 

@@ -44,6 +44,7 @@ const Register = () => {
       });
       setMessage(response.data.message);
       setUserId(response.data.userId);
+      navigate('/login');
     } catch (error) {
       console.error('Registration error:', error);
       if (error.response) {
