@@ -89,7 +89,7 @@ const HomePage = () => {
             </button>
           </section>
 
-          {/* Advertisement Section... */}
+          {/* Advertisement Section.... */}
           <section className="advertisement-section">
             <img src={adImage} alt="Advertisement" className="advertisement-image" />
           </section>
