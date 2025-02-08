@@ -5,7 +5,6 @@ import { FaUserCircle, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { authAPI } from '../../axios';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -13,7 +12,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showProfile, setShowProfile] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -30,19 +28,18 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await authAPI.logout();
+      // Call your logout API if needed
+      await authAPI.logout(); // Optional: If you have an API call for logout
       
       // Clear local state
       logout();
-      setShowProfile(false);
-      
       setSnackbar({
         open: true,
         message: 'Logged out successfully!',
         severity: 'success'
       });
       
-      navigate('/login');
+      navigate('/login'); // Redirect to login page after logout
     } catch (error) {
       console.error('Logout error:', error);
       setSnackbar({
@@ -60,24 +57,6 @@ const Navbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const toggleProfile = () => {
-    setShowProfile(!showProfile);
-  };
-
-  // Close profile dropdown when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showProfile && !event.target.closest('.navbar__profile')) {
-        setShowProfile(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showProfile]);
-
   return (
     <nav className="navbar">
       <div className="navbar__logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
@@ -91,21 +70,15 @@ const Navbar = () => {
         <li><Link to="/contact">Contact</Link></li>
         {user ? (
           <>
-            <li className="navbar__profile" onClick={toggleProfile}>
+            <li className="navbar__profile">
               <FaUserCircle className="avatar-icon" />
-              <span>{user.name}</span>
+              <span>{user.name}</span> {/* Display user name */}
             </li>
-            {showProfile && (
-              <div className="profile-dropdown">
-                <div className="profile-info">
-                  <h3>{user.name}</h3>
-                  <p>{user.email}</p>
-                </div>
-                <button onClick={handleLogout} className="logout-button">
-                  Logout
-                </button>
-              </div>
-            )}
+            <li>
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </li>
           </>
         ) : (
           <li><Link to="/login">Login</Link></li>
