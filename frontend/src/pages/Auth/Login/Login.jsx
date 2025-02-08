@@ -55,7 +55,7 @@ const Login = () => {
         email,
         password,
       });
-      setMessage(response.data.message); // Show success message
+      setMessage(response.data.message); // Show success message.
       // Navigate to homepage after successful login
       navigate('/');
     } catch (error) {
