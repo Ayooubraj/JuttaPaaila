@@ -6,7 +6,7 @@ User Authentication: Secure login, registration, and logout with encrypted crede
 Product Catalog: Browse, search, and filter products with a responsive UI.
 Shopping Cart: Add, remove, and update items in the cart before checkout.
 Secure Transactions: Encrypted communication and secure payment integration.
-Admin Panel: Manage products, users, and orders with restricted access.
+
 Security Measures:
 Password hashing
 Role-based access control
