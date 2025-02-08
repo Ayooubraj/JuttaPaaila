@@ -27,7 +27,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLockedOut, setIsLockedOut] = useState(false);
-  const [timeoutDuration, setTimeoutDuration] = useState(10); // 10 seconds timeout
+  const [timeoutDuration, setTimeoutDuration] = useState(10); // 10 seconds timeout.
   const [message, setMessage] = useState('');
 
   useEffect(() => {
