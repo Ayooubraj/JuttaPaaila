@@ -5,6 +5,7 @@ import { useAuth } from '../../../context/AuthContext';
 import './Register.css';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import axios from 'axios';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -24,6 +25,7 @@ const Register = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [userId, setUserId] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -34,27 +36,14 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('Register attempt with:', formData);
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords don't match!");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return;
-    }
-
     try {
-      console.log('Sending register request...');
-      const response = await register({
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
         name: formData.fullName,
         email: formData.email,
         password: formData.password,
       });
-      setUserId(response.userId);
-      setIsVerified(true);
+      setMessage(response.data.message);
+      setUserId(response.data.userId);
     } catch (error) {
       console.error('Registration error:', error);
       if (error.response) {
