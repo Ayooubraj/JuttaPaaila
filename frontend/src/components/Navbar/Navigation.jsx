@@ -93,6 +93,7 @@ const Navbar = () => {
           <>
             <li className="navbar__profile" onClick={toggleProfile}>
               <FaUserCircle className="avatar-icon" />
+              <span>{user.name}</span>
             </li>
             {showProfile && (
               <div className="profile-dropdown">
