@@ -149,3 +149,55 @@
 // };
 
 // export default Navbar;
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+
+const Navigation = () => {
+  const [user, setUser] = useState(null); // Simulate user authentication state
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // Simulate login (Replace with actual authentication logic)
+    setUser({ email: "user@example.com", password: "password123" });
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    navigate("/login");
+  };
+
+  return (
+    <nav className="p-4 bg-gray-800 text-white flex justify-between items-center">
+      <h1 className="text-xl font-bold">JuttaPaaila</h1>
+      <div className="relative">
+        {user ? (
+          <div>
+            <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <FaUserCircle size={24} />
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white text-black shadow-lg rounded-lg p-2">
+                <p className="px-4 py-2">Email: {user.email}</p>
+                <p className="px-4 py-2">Password: {user.password}</p>
+                <button
+                  className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-200"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button className="bg-blue-500 px-4 py-2 rounded" onClick={handleLogin}>
+            Log in
+          </button>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navigation;
