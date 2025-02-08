@@ -1,27 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../../../axios';
 import { useAuth } from '../../../context/AuthContext';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import './Login.css';
+import axios from 'axios';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const { login, verifyCode } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [userId, setUserId] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     severity: 'success'
   });
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
+  const [timeoutDuration, setTimeoutDuration] = useState(10); // 10 seconds timeout
+
+  useEffect(() => {
+    let timer;
+    if (isLockedOut) {
+      timer = setTimeout(() => {
+        setIsLockedOut(false);
+        setFailedAttempts(0); // Reset attempts after timeout
+      }, timeoutDuration * 1000); // Convert seconds to milliseconds
+    }
+    return () => clearTimeout(timer); // Cleanup timer on unmount
+  }, [isLockedOut, timeoutDuration]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -30,53 +47,30 @@ const Login = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Login attempt with:', formData);
-    
     try {
-      console.log('Sending login request...');
-      const response = await authAPI.login(formData);
-      console.log('Login response:', response);
-
-      if (response.data.user && response.data.token) {
-        login(response.data.user, response.data.token); // Pass both user and token
-        
-        setSnackbar({
-          open: true,
-          message: 'Login successful! Redirecting...',
-          severity: 'success'
+        const response = await axios.post('http://localhost:5000/api/auth/login', {
+            email,
+            password,
         });
-        
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      let errorMessage = 'An error occurred';
-      
-      if (err.response) {
-        switch (err.response.status) {
-          case 404:
-            errorMessage = 'Account not found. Please check your email.';
-            break;
-          case 401:
-            errorMessage = 'Incorrect password. Please try again.';
-            break;
-          case 400:
-            errorMessage = err.response.data.message || 'Invalid credentials';
-            break;
-          default:
-            errorMessage = 'Login failed. Please try again.';
-        }
-      }
-      
-      setSnackbar({
-        open: true,
-        message: errorMessage,
-        severity: 'error'
-      });
+        // Handle successful login (e.g., store token, redirect)
+        console.log(response.data.message);
+    } catch (error) {
+        console.error('Login error:', error.response.data.message);
+        // Handle error (e.g., show error message)
+    }
+  };
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    try {
+      const token = await verifyCode(userId, verificationCode);
+      // Store the token and redirect the user
+      console.log('Logged in successfully with token:', token);
+      // Redirect or update state as needed
+    } catch (error) {
+      console.error('Verification error:', error);
     }
   };
 
@@ -105,38 +99,56 @@ const Login = () => {
         <div className="auth-card">
           <div className="auth-logo">
             <img 
-              src={require('../../../assets/images/shoe_img.jpg')}
+              src={require('../../../assets/images/juttapaaila.png')}
               alt="Logo" 
               loading="lazy"
             />
           </div>
           <h2>Login</h2>
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required
-              />
-            </div>
-            <Link to="/forgot-password" className="forgot-password">
-              Forgot Password?
-            </Link>
-            <button type="submit" className="auth-button">
-              Login
-            </button>
-          </form>
+          {error && <div className="error-message">{error}</div>}
+          {!isVerified ? (
+            <form onSubmit={handleLogin} className="auth-form">
+              <div className="form-group">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Link to="/forgot-password" className="forgot-password">
+                Forgot Password?
+              </Link>
+              <button type="submit" className="auth-button" disabled={isLockedOut}>
+                Login
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerify} className="auth-form">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Verification Code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="auth-button">
+                Verify
+              </button>
+            </form>
+          )}
           <p className="auth-switch">
             Don't have an account? <Link to="/register">Sign Up</Link>
           </p>

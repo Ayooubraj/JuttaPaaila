@@ -18,6 +18,7 @@ import Contact from './pages/Contact/Contact';
 import { AdminAuthProvider } from './context/AdminAuthContext';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminLogin from './pages/Admin/Auth/AdminLogin';
+import Profile from './pages/Profile/Profile';
 const theme = createTheme();
 
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
                   <Route path="/products" element={<ProductPage />} />
                   <Route path="/admin-login" element={<AdminLogin />} />
                   <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  <Route path="/profile" element={<Profile />} />
                 </Routes>
               </div>
             </Router>

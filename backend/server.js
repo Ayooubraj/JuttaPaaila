@@ -26,10 +26,8 @@ const startServer = async () => {
 
     // CORS configuration - add this before other middleware
     app.use(cors({
-        origin: 'http://localhost:3000', // Your frontend URL
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization']
+        origin: 'http://localhost:3000', // Allow requests from your frontend
+        credentials: true // Allow credentials (cookies, authorization headers, etc.)
     }));
 
     // Other Middleware
@@ -71,7 +69,8 @@ const startServer = async () => {
     });
 
     // Routes
-    app.use('/api/auth', require('./routes/auth'));
+    const authRoutes = require('./routes/auth');
+    app.use('/api/auth', authRoutes);
 
     app.post('/products', upload.single('image'), async (req, res) => {
         const { name, category, price } = req.body;

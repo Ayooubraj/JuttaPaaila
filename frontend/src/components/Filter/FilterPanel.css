@@ -2,8 +2,8 @@
 .filter-panel {
   width: 250px; /* Fixed width */
   padding: 20px;
-  background-color: #dbdbdb;
-  color: #000000;
+  background-color: #000000;
+  color: #ffffff;
   overflow-y: auto; /* Scrollable if content overflows */
   border-radius: 0; /* Removes rounded edges */
   margin: 0; /* Align with hero section */
@@ -38,7 +38,7 @@
   cursor: pointer;
   width: 18px;
   height: 18px;
-  border: 2px solid #000000;
+  border: 2px solid #ffffff;
   background-color: transparent;
   display: inline-block;
 }

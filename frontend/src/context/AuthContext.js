@@ -76,42 +76,35 @@ export const userAPI = {
 export default instance;
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(() => {
-        try {
-            const savedUser = localStorage.getItem('user');
-            return savedUser ? JSON.parse(savedUser) : null;
-        } catch (error) {
-            console.error('Error parsing user from localStorage:', error);
-            return null;
-        }
-    });
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
 
-    const [token, setToken] = useState(localStorage.getItem('token'));
-
-    const login = (userData, userToken) => {
-        setUser(userData);
-        setToken(userToken);
-        try {
-            localStorage.setItem('user', JSON.stringify(userData));
-        } catch (error) {
-            console.error('Error saving user to localStorage:', error);
-        }
-        localStorage.setItem('token', userToken);
+    const login = async ({ email, password }) => {
+        const response = await instance.post('/auth/login', { email, password });
+        setUser(response.data.user); // Assuming the response contains user data
+        setToken(response.data.token); // Store the token
+        localStorage.setItem('token', response.data.token); // Optionally store in localStorage
     };
 
     const logout = () => {
         setUser(null);
         setToken(null);
-        try {
-            localStorage.removeItem('user');
-        } catch (error) {
-            console.error('Error removing user from localStorage:', error);
-        }
-        localStorage.removeItem('token');
+        localStorage.removeItem('token'); // Clear token from localStorage
+    };
+
+    const register = async (userData) => {
+        const response = await axios.post('http://localhost:5000/api/auth/register', userData);
+        setUser(response.data.user); // Ensure this includes the name
+        return response.data; // Return userId for verification
+    };
+
+    const verifyCode = async (userId, code) => {
+        const response = await axios.post('http://localhost:5000/api/auth/verify', { userId, code });
+        return response.data.token; // Return the token
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, logout, register, verifyCode }}>
             {children}
         </AuthContext.Provider>
     );

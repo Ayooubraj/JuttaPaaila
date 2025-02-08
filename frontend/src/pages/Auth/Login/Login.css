@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('../../../assets/images/bg_img.jpg');
+  background-image: url('../../../assets/images/shoe_img.jpg');
   background-size: cover;
   background-position: center;
   padding: 20px;
@@ -114,19 +114,19 @@
 }
 
 .form-group input:focus {
-  border-color: #7db035;
+  border-color: #981111;
   outline: none;
 }
 
 .forgot-password {
   text-align: right;
-  color: #7db035;
+  color: #981111;
   text-decoration: none;
   font-size: 14px;
 }
 
 .auth-button {
-  background-color: #7db035;
+  background-color: #981111;
   color: white;
   padding: 12px;
   border: none;
@@ -137,7 +137,7 @@
 }
 
 .auth-button:hover {
-  background-color: #6a9429;
+  background-color: #981111;
 }
 
 .auth-switch {
@@ -147,7 +147,7 @@
 }
 
 .auth-switch a {
-  color: #7db035;
+  color: #981111;
   text-decoration: none;
   font-weight: bold;
 }

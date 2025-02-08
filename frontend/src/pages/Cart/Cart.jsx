@@ -1,11 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { CartContext } from '../../context/CartContext';
 import './Cart.css';
+
+// Declare KhaltiCheckout as a global variable to avoid ESLint errors
+/* global KhaltiCheckout */
 
 const Cart = () => {
   const { cartItems, setCartItems } = useContext(CartContext); // Use CartContext
 
   const [selectedPayment, setSelectedPayment] = useState('cod'); // Default to COD
+
+  useEffect(() => {
+    // Check if KhaltiCheckout is defined
+    if (typeof KhaltiCheckout !== 'undefined') {
+      console.log("KhaltiCheckout is loaded successfully.");
+    } else {
+      console.error("KhaltiCheckout is not defined.");
+    }
+  }, []);
 
   const updateQuantity = (itemId, change) => {
     setCartItems(prevItems =>
@@ -33,8 +45,31 @@ const Cart = () => {
     const confirmation = window.confirm("Are you sure you want to make a purchase?");
     if (confirmation) {
       if (selectedPayment === 'khalti') {
-        // Implement Khalti payment logic here
-        console.log('Processing Khalti payment...');
+        // Khalti payment logic
+        const config = {
+          publicKey: "YOUR_KHALTI_PUBLIC_KEY", // Replace with your Khalti public key
+          productIdentity: "1234567890", // Unique product identity
+          productName: "Your Product Name", // Product name
+          productUrl: "http://yourproducturl.com", // Product URL
+          amount: calculateTotal() * 100, // Amount in paisa
+          eventHandler: {
+            onSuccess(payload) {
+              console.log(payload);
+              alert("Payment Successful!");
+              // Handle successful payment here (e.g., save order to database)
+            },
+            onError(error) {
+              console.error(error);
+              alert("Payment Failed!");
+            },
+            onClose() {
+              console.log("Widget is closed");
+            }
+          }
+        };
+
+        const checkout = new KhaltiCheckout(config);
+        checkout.show(); // Show the Khalti payment widget
       } else {
         // Implement COD logic here
         console.log('Processing Cash on Delivery...');

@@ -5,9 +5,7 @@
   padding: 100px;
   background-color: #000; /* Background color */
 }
-.hero{
-  height:10px;
-}
+
 /* Filter Panel */
 .filter-container {
   flex: 0 0 250px; /* Fixed width for the filter panel */
@@ -127,4 +125,34 @@
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+}
+
+.hero {
+  position: relative;
+  min-height: 80vh;
+  overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom; /* Moves focus to the lower part of the image */
+}
+
+.hero__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00000000; 
+}
+
+.hero__content {
+  color: white; /* Change text color for better visibility */
+  text-align: center;
 }
